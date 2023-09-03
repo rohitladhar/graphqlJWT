@@ -7,11 +7,12 @@ const {connectDB} = require('./db')
 dotenv.config()
 connectDB()
 app.get("/",(req,res)=>{
-    res.json({msg:"reached"})
+    res.json({msg:"graphql reached"})
 })
-app.get('/graphql',graphqlHTTP({
+app.use('/graphql',graphqlHTTP({
     schema:schema,
     graphiql:true
+    // graphql interface
 }))
 
 app.listen(process.env.PORT,()=>{
