@@ -1,22 +1,20 @@
 const { GraphQLSchema,GraphQLObjectType } = require("graphql")
 
-const {} = require("./queries")
-const {} = require("./mutations")
+const {users} = require("./queries")
+const {register , login} = require("./mutations")
 
 const QueryType = new GraphQLObjectType({
     name:'QueryType',
     description:'Queries',
     fields:{
-
+        users
     },
 })
 
 const MutationType = new GraphQLObjectType({
     name:'MutationType',
     description:'Mutations',
-    fields:{
-
-    }
+    fields:{register , login}
 })
 module.exports = new GraphQLSchema({
     query:QueryType,
