@@ -11,7 +11,6 @@ const {authenticate} = require('./middleware/auth')
 
 app.use(authenticate)
 app.get("/",(req,res)=>{
-    console.log("+++++++++++++++++++++++++++++++",req.verifiedUser)
     res.json({msg:"graphql reached"})
 })
 app.get('/authtest', (req,res)=>{
