@@ -23,7 +23,7 @@ const PostType = new GraphQLObjectType({
         author:{
             type:UserType,
             resolve(parent,args){
-                return User.findById(parent.authorId)
+                return User.findById(parent.authorID)
             }
         },
         comments:{
