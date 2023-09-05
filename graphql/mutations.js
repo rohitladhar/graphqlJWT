@@ -76,4 +76,33 @@ const addComment = {
         return comment.save()
     }
 }
-module.exports = {register , login, addPost ,addComment}
+
+const updatePost ={
+    type : PostType,
+    description:"Update Blog Post",
+    args:{
+        id:{type:GraphQLString},
+        title:{type:GraphQLString},
+        body:{type:GraphQLString},
+    },
+    async resolve(parent,args,{verifiedUser}){
+        if(!verifiedUser){
+            throw new Error("Unauthenticated")
+        }
+
+        const postUpdated = await Post.findOneAndUpdate({
+            _id:args.id,authorID : verifiedUser._id
+        },
+        {title:args.title,body:args.body},{
+            new:true,
+            runValidators:true
+        })
+
+        if(!postUpdated){
+            throw new Error("Post not found")
+        }
+
+        return postUpdated
+    }
+}
+module.exports = {register , login, addPost ,addComment, updatePost, updatePost}
