@@ -1,8 +1,7 @@
 const { PostType,CommentType } = require('./types')
 const { User,Post,Comment } = require('../models')
-const {GraphQLString, GraphQLID} = require('graphql')
+const {GraphQLString} = require('graphql')
 const { createJwtToken } = require('../util/auth')
-const { json } = require('express')
 
 const register = {
     type:GraphQLString,
