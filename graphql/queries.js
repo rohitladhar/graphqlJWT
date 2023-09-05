@@ -1,7 +1,6 @@
 const { GraphQLList, GraphQLID } = require('graphql')
-
-const { UserType, PostType } = require('./types')
-const {User,Post} = require('../models')
+const { UserType, PostType, CommentType } = require('./types')
+const {User,Post,Comment} = require('../models')
 
 const users = {
     type: new GraphQLList(UserType),
@@ -40,4 +39,23 @@ const post = {
     }
 }
 
-module.exports = {users,user,posts,post}
+const comments = {
+    type: new GraphQLList(CommentType),
+    description:"Retrieves list of posts",
+    resolve(){
+        return Comment.find()
+    }
+}
+
+const comment = {
+    type:PostType,
+    description:'Retrieves one User',
+    args:{
+        id:{type:GraphQLID}
+    },
+    resolve(_,args){
+        return Comment.findById(args.id)
+    }
+}
+
+module.exports = {users,user,posts,post,comments,comment}
