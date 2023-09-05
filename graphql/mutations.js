@@ -1,7 +1,8 @@
 const { PostType,CommentType } = require('./types')
 const { User,Post,Comment } = require('../models')
-const {GraphQLString} = require('graphql')
+const {GraphQLString, GraphQLID} = require('graphql')
 const { createJwtToken } = require('../util/auth')
+const { json } = require('express')
 
 const register = {
     type:GraphQLString,
@@ -105,4 +106,81 @@ const updatePost ={
         return postUpdated
     }
 }
-module.exports = {register , login, addPost ,addComment, updatePost, updatePost}
+
+const deletePost = {
+    type:PostType,
+    description:"Delete Post",
+    args:{
+        postId:{type:GraphQLString}
+    },
+    async resolve(parent,args,{verifiedUser}){
+
+        if(!verifiedUser){
+            throw new Error("Unauthenticated")
+        }
+        const postExist = await Post.findOneAndDelete({
+            _id:args.postId, authorID: verifiedUser._id
+        })
+
+        if(!postExist){
+            throw new Error("No post exist")
+        }
+
+        return "Post deleted";
+    }
+}
+
+const updateComment = {
+    type: CommentType,
+    description: "Update blog comment",
+    args: {
+      id: { type: GraphQLString },
+      comment: { type: GraphQLString },
+    },
+    async resolve(parent, args, { verifiedUser }) {
+      if (!verifiedUser) {
+        throw new Error("Unauthenticated")
+      }
+      const commentUpdated = await Comment.findOneAndUpdate(
+        {
+          _id: args.id,
+          userId: verifiedUser._id,
+        },
+        { comment: args.comment },
+        {
+          new: true,
+          runValidators: true,
+        }
+      )
+  
+      if (!commentUpdated) {
+        throw new Error("No comment with the given ID found for the author")
+      }
+  
+      return commentUpdated
+    },
+  }
+  
+  const deleteComment = {
+    type: GraphQLString,
+    description: "Delete comment",
+    args: {
+      commentId: { type: GraphQLString },
+    },
+    async resolve(parent, args, { verifiedUser }) {
+    
+      if (!verifiedUser) {
+        throw new Error("Unauthenticated")
+      }
+      const commentDeleted = await Comment.findOneAndDelete({
+        _id: args.commentId,
+        userId: verifiedUser._id,
+      })
+      if (!commentDeleted) {
+        throw new Error("No post with the given ID found for the author")
+      }
+  
+      return "Comment deleted"
+    },
+  }
+module.exports = {register , login, addPost ,addComment, updatePost, updatePost,deletePost, updateComment, deleteComment}
